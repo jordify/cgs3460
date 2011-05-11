@@ -1,4 +1,4 @@
-=CGS3460 Programming in C=
+# CGS3460 Programming in C Homework Repository
 
 A repo to hold my cg23460 homework assignments. Nothing will be pushed
 to github until after the assignment due date. You probably should not

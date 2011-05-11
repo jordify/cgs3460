@@ -1,0 +1,28 @@
+Homework 1: Question 2
+Author: Jorge Gomez
+Last Modified: Wed May 11, 2011 at 11:38
+
+``35number'':
+  Invalid identifier. Starts with a digit.
+
+``Symbol_Table'':
+  Valid identifier.
+
+``Name-And_Address'':
+  Invalid identifier. Contains a subtraction; will be evaluated as an 
+  expression.
+
+``_digit'':
+  Valid identifier.
+
+``_digit__'':
+  Valid identifier.
+
+``_dig__it_'':
+  Valid identifier.
+
+``If'':
+  Valid identifier. Case sensitive, not read as ``if''
+
+``main'':
+  Valid identifier.

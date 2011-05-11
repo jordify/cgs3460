@@ -1,0 +1,38 @@
+Homework 1: Question 1
+Author: Jorge Gomez
+Last Modified: Wed May 11, 2011 at 11:27
+
+OS: GNU/Linux. Specifically:
+Linux shih 2.6.38-ARCH #1 SMP PREEMPT Fri Apr 22 17:48:36 UTC 2011 i686 Intel(R) Core(TM)2 CPU 6300 @ 1.86GHz GenuineIntel GNU/Linux
+
+List the contents of the current directory:
+  `ls`
+  I did not use arguments with the ls command but you can use -l to list 
+  the directory with each item on its own line and -a to list hidden 
+  files and folders.
+
+Display the contents of a file on screen:
+  `cat file.txt`
+  The argument is the file you would like to show on screen.
+
+Display the path to the current directory:
+  `pwd`
+  No arguments.
+
+Change to another directory:
+  `cd /path/to/directory`
+  The argument is the path to the target directory.
+
+Create a directory:
+  `mkdir directoryName`
+  The argument is the path (relative to the working directory) of the 
+  directory to be created.
+
+Copy the contents of one file to another:
+  `cp sourceFile destinationFile`
+  The cp command will copy the contents of ``sourceFile'' to 
+  ``destinationFile''
+
+Delete a file from the disk:
+  `rm file.txt`
+  The argument is the file to be removed.

@@ -1,0 +1,15 @@
+ Homework 1: Question 5
+ Author: Jorge Gomez
+ Last Modified: Wed May 11, 2011 at 16:27
+
+printf("-%-5.3d-%-10.3f-", 85, 0.0225);
+  Printed to the screen will be "-085  -0.022     -"; a dash followed by
+  the three digit representation of the integer 85 (085) left justified 
+  in 5 spaces, then a dash followed by the 3 significant figure 
+  representation of 0.0225 (0.022) left justified in ten spaces, finally 
+  a dash.
+scanf("%f%d%f", &x, &y, &z); // for "3 2.1 1.2"
+  x will be given the float value 3.0, y will be given the integer value
+  2, and z will be given the float value 0.1. 1.2 will not be read 
+  because scanf will match the %d to the second user inputed value "2.1" 
+  and will match the .1 portion to the last float.
