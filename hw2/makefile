@@ -12,4 +12,4 @@ cipher:
 tri:
 	gcc -Wall -o tri triangle.c
 clean:
-	rm *.o complex fib tri cipher
+	rm complex fib tri cipher
