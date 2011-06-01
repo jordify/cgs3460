@@ -11,19 +11,19 @@ int main() {
 
     char inBuf[BUF_SIZE];
     char* input = malloc(sizeof(char)*BUF_SIZE);
-    char* output = malloc(sizeof(char)*BUF_SIZE);
 
     size_t inputSize = 1; // Just NUL at first
 
     input[0] = '\0';
-    output[0] = '\0';
 
     // Get plain text from stdin until EOF
     while(fgets(inBuf, BUF_SIZE, stdin)) {
         inputSize += strlen(inBuf);
         input = realloc(input, inputSize);
-        strcat(input, inBuf);\
+        strcat(input, inBuf);
     }
+
+    char* output = malloc((int)(1.2*sizeof(char)*strlen(input)));
 
     j = 0;
     int written = 0;
@@ -52,6 +52,7 @@ int main() {
             written++;
         }
     }
+    output[j] = '\0';
     fwrite(output, 1, strlen(output), stdout);
     printf("\n");
     free(input);
