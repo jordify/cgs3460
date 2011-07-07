@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,36 +8,38 @@
 #define MEM_SIZE 32
 #define OPCODE_SIZE 3
 
-int pc = 0; // program counter
-char ir[MEM_WIDTH+1]; // instruction register
-char ac[MEM_WIDTH+1]; // accumulator
-char memory[MEM_SIZE][MEM_WIDTH+1]; // memory
+int pc = 0; // Program Counter
+char ir[MEM_WIDTH+1]; // Instruction Register
+char ac[MEM_WIDTH+1]; // Accumulator
+char memory[MEM_SIZE][MEM_WIDTH+1]; // Memory
 
-// sets the memory to some default content
+// Sets the memory to some default content
 void set_memory();
 
-// reads the memory from keyboard
+// Reads the memory from keyboard
 void read_memory();
 
-// prints the memory on screen
+// Prints the memory on screen
 void print_memory();
 
-// converts an integer from decimal to binary,
-// represented as a null-terminated string
-// the result is always represented on MEM_WIDTH bits
+// Converts an integer from decimal to binary, represented as a
+// null-terminated string.  The result is always represented on
+// MEM_WIDTH bits.
 void dec2bin(int dec, char *bin);
 
-// converts an integer from binary, represented as a null-terminated string,
-// to decimal
-// the string can have any length (up to MEM_WIDTH),
-// depending on the position of the null character
+// Converts an integer from binary, represented as a null-terminated
+// string, to decimal. The string can have any length (up to MEM_WIDTH),
+// depending on the position of the null character.
 int bin2dec(char *bin);
 
-// executes the program in memory
+// Executes the program in memory
 void execute();
 
+// Debug wrapper for printf
+int debugPrintf(const char *fmt, ...);
+
 int main(int argc, char* argv[]) {
-    // Check cli, print usage if not present
+    // Check cli, print usage if argv[1] not present
     if (argc != 2) {
         printf("Usage: %s [read memory]\n\tIf read memory != 0, user \
 will provide the value of the instruction/data memory.\n\tIf read \
@@ -108,24 +111,24 @@ void read_memory() {
     for (; i < MEM_SIZE; i++) {
         printf("memory[%d]: ", i);
         rc = fgets(temp, MEM_WIDTH+2, stdin);
-        if (rc == NULL) // An error
+        if (rc == NULL) // An error or EOF
             break;
-        else { // copy the first 8 bits to memory followed by a null char
+        else {
             len = strlen(temp);
             if (len <= MEM_WIDTH) { // Fix if input is less than MEM_WIDTH
-                printf("SHORT %d\n", len);
                 strncpy(memory[i], temp, len-1);
                 int j;
                 for (j = len-1; j < MEM_WIDTH; j++)
-                    memory[i][j] = '0';
-            }
-            else
+                    memory[i][j] = '0'; // Zero all bits not specified by user
+            } else {
+                // copy the first 8 bits to memory
                 strncpy(memory[i], temp, MEM_WIDTH);
-            memory[i][MEM_WIDTH] = '\0';
+            }
+            memory[i][MEM_WIDTH] = '\0'; // Always add null bit
         }
     }
 
-    // If an EOF occured, zero out the rest of the memory
+    // If an error or EOF occured, zero out the rest of the memory
     if (i < MEM_SIZE)
         for (; i < MEM_SIZE; i++)
             strcpy(memory[i], "00000000\0");
@@ -142,7 +145,8 @@ void print_memory() {
         printf("memory[%d]: ", i);
         puts(memory[i]);
     }
-    printf("\n==============================\n");
+
+    printf("==============================\n");
 }
 
 void dec2bin(int dec, char *bin) {
@@ -155,7 +159,6 @@ void dec2bin(int dec, char *bin) {
 }
 
 int bin2dec(char *bin) {
-    // TODO: Variable length
     int i, rc, len;
     len = strlen(bin);
 
@@ -164,7 +167,7 @@ int bin2dec(char *bin) {
         if (*(bin+i)=='1')
             rc += pow(2,(len-1)-i);
     }
-    return rc;
+    return (rc);
 }
 
 void execute() {
@@ -172,9 +175,9 @@ void execute() {
     int x;
 
     while (1) {
-        printf("pc=%d\n", pc);
-        printf("ac=0b");
-        puts(ac);
+        debugPrintf("==============================\n");
+        debugPrintf("pc=%d\n", pc);
+        debugPrintf("ac=0b%s\n",ac);
 
         // Load instruction into IR
         strcpy(ir, memory[pc]);
@@ -187,45 +190,59 @@ void execute() {
         
         // Perform the instruction
         if (strcmp(inst,"000")==0) {
-            printf("Halt\n");
+            debugPrintf("Halt\n");
             break;
         }
         else if (strcmp(inst,"001")==0) {
-            printf("JANZ\n");
+            debugPrintf("JANZ\n");
             if(bin2dec(ac)!=0)
                 pc = bin2dec(ir+3);
         }
         else if (strcmp(inst,"010")==0) {
-            printf("StAM\n");
+            debugPrintf("StAM\n");
             strcpy(memory[bin2dec(ir+3)], ac);
         }
         else if (strcmp(inst,"011")==0) {
-            printf("LdAM\n");
+            debugPrintf("LdAM\n");
             strcpy(ac, memory[bin2dec(ir+3)]);
         }
         else if (strcmp(inst,"100")==0) {
-            printf("AddM\n");
+            debugPrintf("AddM\n");
             x = bin2dec(ac) + bin2dec(memory[bin2dec(ir+3)]);
             dec2bin(x, ac);
         }
         else if (strcmp(inst,"101")==0) {
-            printf("AddI\n");
+            debugPrintf("AddI\n");
             x = bin2dec(ac) + bin2dec(ir+3);
             dec2bin(x, ac);
         }
         else if (strcmp(inst,"110")==0) {
-            printf("SubM\n");
+            debugPrintf("SubM\n");
             x = bin2dec(ac) - bin2dec(memory[bin2dec(ir+3)]);
             dec2bin(x, ac);
         }
         else if (strcmp(inst,"111")==0) {
-            printf("SubI\n");
+            debugPrintf("SubI\n");
             x = bin2dec(ac) - bin2dec(ir+3);
             dec2bin(x, ac);
         }
         else {
-            printf("NAN\n");
+            debugPrintf("NAN\n");
             break;
         }
     }
+}
+
+int debugPrintf(const char *fmt, ...) {
+    // Wrapper for printf
+    // This function Will only print if the DEBUG flag is set. It can be
+    // set by adding "-DDEBUG" to the gcc argument list.
+    int rc = 0;
+#ifdef DEBUG
+    va_list args;
+    va_start(args, fmt);
+    rc = vprintf(fmt,args);
+    va_end(args);
+#endif
+    return (rc);
 }
