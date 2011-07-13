@@ -19,8 +19,9 @@ void set_memory();
 // Reads the memory from keyboard
 void read_memory();
 
-// Prints the memory on screen
-void print_memory();
+// Prints the memory on screen (added argument to differentiate the
+// post execution memory from the pre execution memory)
+void print_memory(int after);
 
 // Converts an integer from decimal to binary, represented as a
 // null-terminated string.  The result is always represented on
@@ -42,7 +43,11 @@ int main(int argc, char* argv[]) {
     // Check cli, print usage if argv[1] not present
     if (argc != 2) {
         printf("Usage: %s [read memory]\n\tIf read memory != 0, user \
-will provide the value of the instruction/data memory.\n\tIf read \
+will provide the value of the instruction/data memory. \n\t\tMemory should \
+be given byte by byte as a string of bits of \"0\"s and \"1\"s with no spaces \
+or other \n\t\tcharacters. Entering in less than 8 bits will result in the \
+entered characters being \n\t\tinterpreted as the lest significant bits in the \
+byte and the rest of the byte will be \n\t\tinitialized to zeros.\n\tIf read \
 memory == 0, the defaults will be used.\n", argv[0]);
         return (1);
     }
@@ -51,11 +56,14 @@ memory == 0, the defaults will be used.\n", argv[0]);
     else
         read_memory(); // Otherwise, read memory
 
+    // Print memory before execution
+    print_memory(0);
+
     // Execute
     execute();
 
-    // Print Memory
-    print_memory();
+    // Print memory after exectuion
+    print_memory(1);
 
     // Print ac
     printf("Acumulator: \n");
@@ -107,21 +115,23 @@ void read_memory() {
     char temp[MEM_WIDTH+1];
 
     printf("==============================\n");
-    printf("Enter Values (Ctr-d will zero out the rest):\n");
+    printf("Enter Values (Ctr-d, \"0\", or \"00000000\" will zero out the rest):\n");
     for (; i < MEM_SIZE; i++) {
         printf("memory[%d]: ", i);
         rc = fgets(temp, MEM_WIDTH+2, stdin);
         if (rc == NULL) // An error or EOF
             break;
+        else if (strcmp(temp,"00000000\n")==0 || strcmp(temp,"0\n")==0) // To deal with the addendum
+            break;
         else {
-            len = strlen(temp);
+            len = strlen(temp)-1; // Ignore the newline character
             if (len <= MEM_WIDTH) { // Fix if input is less than MEM_WIDTH
-                strncpy(memory[i], temp, len-1);
+                strncpy(memory[i]+(MEM_WIDTH-len), temp, len);
                 int j;
-                for (j = len-1; j < MEM_WIDTH; j++)
+                for (j = 0; j < (MEM_WIDTH-len); j++)
                     memory[i][j] = '0'; // Zero all bits not specified by user
             } else {
-                // copy the first 8 bits to memory
+                // copy the 8 bits to memory
                 strncpy(memory[i], temp, MEM_WIDTH);
             }
             memory[i][MEM_WIDTH] = '\0'; // Always add null bit
@@ -135,11 +145,14 @@ void read_memory() {
     printf("\n==============================\n");
 }
 
-void print_memory() {
+void print_memory(int after) {
     int i = 0;
 
     printf("==============================\n");
-    printf("Memory Values:\n");
+    if (after)
+        printf("Memory Values After Execution:\n");
+    else
+        printf("Memory Values Before Execution:\n");
 
     for (; i < MEM_SIZE; i++) {
         printf("memory[%d]: ", i);
