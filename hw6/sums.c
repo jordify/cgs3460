@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-int sigma(int (*func)(int), int bottom, int top); /* Returns sum */
+// Returns sum of func from bottom to top
+int sigma(int (*func)(int), int bottom, int top);
 
+// Functions to be tested in sigma
 int noop(int i);
 int cubed(int i);
 int halved(int i);

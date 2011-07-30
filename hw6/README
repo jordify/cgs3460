@@ -1,0 +1,10 @@
+Homework #6
+Jorge Gomez
+
+Before compiling please make sure the correct jpeg library object file
+is being compiled. The second line in the makefile defines that object.
+
+Once $(JPEGOBJ) is defined correctly, just run make to compile both
+programs. All files needed for compilation are included in this tar
+file. Notice that histogram has been split into a header file and source
+file for easier program management and readability.
