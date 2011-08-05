@@ -1,5 +1,5 @@
 CC = gcc
-JPEGOBJ = jpeg32.o
+JPEGOBJ = jpeg64.o
 
 all: sums histogram
 
